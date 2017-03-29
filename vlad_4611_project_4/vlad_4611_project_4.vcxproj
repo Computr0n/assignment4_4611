@@ -18,6 +18,21 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="amcutil.h" />
+    <ClInclude Include="camera.hpp" />
+    <ClInclude Include="character.hpp" />
+    <ClInclude Include="character_impl.hpp" />
+    <ClInclude Include="config.hpp" />
+    <ClInclude Include="draw.hpp" />
+    <ClInclude Include="engine.hpp" />
+    <ClInclude Include="graphics.hpp" />
+    <ClInclude Include="reader.hpp" />
+    <ClInclude Include="spline.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{6aabd497-d68e-4f91-b3b0-1b25c2a1f74c}</ProjectGuid>
@@ -117,9 +132,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="test.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
