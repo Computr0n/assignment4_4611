@@ -33,6 +33,15 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="demo.mp4" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="15-mocap-data.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CMUmocapSkeleton.png" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{6aabd497-d68e-4f91-b3b0-1b25c2a1f74c}</ProjectGuid>

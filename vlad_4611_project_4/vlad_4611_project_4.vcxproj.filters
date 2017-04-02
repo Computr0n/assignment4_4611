@@ -51,4 +51,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="demo.mp4" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="15-mocap-data.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CMUmocapSkeleton.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

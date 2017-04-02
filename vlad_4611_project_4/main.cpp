@@ -22,7 +22,7 @@ public:
     float time; // time along the path
 
     SplineWalker() {
-        window = createWindow("Walk the Spline", 1280, 720);
+        window = createWindow("Walk the Spline", 640, 360);
         camera = new OrbitCamera(5, 0, 0, Perspective(30, 16/9., 0.1, 20));
         character = new Character(Config::asfFile, Config::amcFile,
                                   Config::basePosition, Config::baseVelocity);
