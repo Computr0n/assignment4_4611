@@ -122,7 +122,7 @@ public:
         addLight(GL_LIGHT3, vec4(0,1,+1,0), 0.2*vec3(1,1,1));
 
         // Draw floor
-        drawFloor(path->getValue(time));
+        //drawFloor(path->getValue(time));
 
         glColor3f(0.8,0.2,0.2);
         drawSpline(path);
