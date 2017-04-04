@@ -52,7 +52,7 @@ public:
     // Each of these bones will, in turn, have 0 or more child bones.
     vector<Bone*> rootNodeBones;
   
-    // TODO: Implement this routine to draw all the character's bones
+    // DONE: Implement this routine to draw all the character's bones
     // in the correct pose based on the current animation data.
     void draw();
 
@@ -182,7 +182,7 @@ inline vec3 Character::getCurrentPosition() {
 
 inline void Character::draw() {
 	
-    // TODO: Apply the current coordinate frame and then draw the root
+    // DONE: Apply the current coordinate frame and then draw the root
     // node bones of the character.
 
 
@@ -190,13 +190,13 @@ inline void Character::draw() {
 
 	glPushMatrix(); // Start Base Offset
 
-		glMultMatrixf(&CurrCoordFrame[0][0]); // apply charachter coordnate frame
+		glMultMatrixf(&CurrCoordFrame[0][0]); // apply charachter coordinate frame
 
 		for (int i = 0; i < rootNodeBones.size(); i++) { //itterate through all root bones with draw
 			rootNodeBones[i]->draw();
 		}
 
-	glPushMatrix(); // End Base Offset
+	glPopMatrix(); // End Base Offset
 
 }
 
@@ -206,27 +206,41 @@ inline Bone::Bone(Reader &r, bool deg) {
 
 inline void Bone::draw() {
 
-    // TODO: Draw the bone as a capsule (a cylinder capped by
+    // DONE: Draw the bone as a capsule (a cylinder capped by
     // spheres). Translate to the end of the bone vector and draw the
     // bone's children, recursively.
 
-	vec3 boneVec = this->getBoneVector();
-	mat4 currLocalBoneRot = this->getCurrentLocalRotation();
+	vec3  boneVec			= this->getBoneVector();
+	vec3  b					= glm::normalize(boneVec);
+	float bLength			= glm::length(b);  //no problem here
+	vec3  z					= vec3(0, 0, 1);
+	vec3  rotAxis			= glm::cross(b, z);
+	float rotAxisLength		= glm::length(rotAxis);  
+	float angleRad			= glm::dot(b, z);
+	float angleDeg			= glm::degrees(angleRad);
+
+	mat4 currLocalBoneRot	= this->getCurrentLocalRotation();
 
 	glPushMatrix();
 		glMultMatrixf(&currLocalBoneRot[0][0]);
+		
 
-		Draw::axes(.25);
 		Draw::line(boneVec);
-		Draw::capsule(this->length, boneVec);
+		
+		//string name = this->getName();
+		//if (name == "lhipjoint" || name == "rhipjoint" || name == "lowerback")
+		//{
+		//	Draw::line(rotAxis); //draw axis of rotation for capsule
+		//}
+		
+		Draw::capsule(this->length, boneVec, rotAxis, angleDeg);
+		glTranslatef(boneVec.x, boneVec.y, boneVec.z); // move origin to end of bone before drawing child bone
+		Draw::axes(.05);
 
 		if (!(this->children.empty()))
 		{
 			for (int i = 0; i < this->children.size(); i++) { // recurse through children
-				glPushMatrix();
-					glTranslatef(boneVec.x, boneVec.y, boneVec.z); // move origin to end of bone before drawing child bone
 					this->children[i]->draw();
-				glPopMatrix();
 			}
 		}
 

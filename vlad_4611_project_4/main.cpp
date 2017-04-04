@@ -83,7 +83,7 @@ public:
 
         // TODO: Modify this to control the speed of the character's
         // walk cycle animation.
-        character->advance(dt);
+        character->advance(dt); 
 
         vec3 p = path->getValue(time);
         vec3 c = camera->getCenter();

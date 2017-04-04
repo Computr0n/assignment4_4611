@@ -130,16 +130,17 @@ namespace Draw {
 		glEnd();
 	}
 
-	inline void capsule(float length, vec3 boneVec) {
-
+	inline void capsule(float length, vec3 boneVec, vec3 rotAxis, float angleDeg) {
+		
 		Draw::sphere(vec3(0, 0, 0), .05);			// sphere at start position (in bone coord frame)
 
-		glPushMatrix();
-			glScalef(.05, .05, length);
-			Draw::unitCylinderZ();					// cylinder between spheres
-		glPopMatrix();
+			glPushMatrix();
+				glRotatef(-90 + angleDeg, rotAxis.x, rotAxis.y, rotAxis.z);
+				glScalef(.05, .05, length);
+				Draw::unitCylinderZ();					// cylinder between spheres
+			glPopMatrix();
 
-		Draw::sphere(vec3(0, 0, 0) + boneVec , .05); // sphere at end position
+		Draw::sphere(vec3(0, 0, 0) + boneVec, .05); // sphere at end position
 
 	}
 
