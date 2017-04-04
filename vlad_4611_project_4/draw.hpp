@@ -122,6 +122,27 @@ namespace Draw {
         glPopMatrix();
     }
 
+	inline void line(vec3 bonVec) {
+		glLineWidth(2.5);
+		glBegin(GL_LINES);
+		glVertex3f(0.0, 0.0, 0.0);
+		glVertex3f(bonVec.x, bonVec.y, bonVec.z);
+		glEnd();
+	}
+
+	inline void capsule(float length, vec3 boneVec) {
+
+		Draw::sphere(vec3(0, 0, 0), .05);			// sphere at start position (in bone coord frame)
+
+		glPushMatrix();
+			glScalef(.05, .05, length);
+			Draw::unitCylinderZ();					// cylinder between spheres
+		glPopMatrix();
+
+		Draw::sphere(vec3(0, 0, 0) + boneVec , .05); // sphere at end position
+
+	}
+
 }
 
 #endif

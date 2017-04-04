@@ -181,25 +181,22 @@ inline vec3 Character::getCurrentPosition() {
 }
 
 inline void Character::draw() {
-
-	mat4 CurrCoordFrame = this->getCurrentCoordinateFrame();
-	vec3 CurrPos = this->getCurrentPosition();
-
-	glPushMatrix(); // Start Base Offset
-		glTranslatef(this->basePosition.x, this->basePosition.y, this->basePosition.z); // compensate for AMC
-		for (int i = 0; i < rootNodeBones.size(); i++) {
-			rootNodeBones[i]->draw();
-		}
-	glPushMatrix(); // End Base Offset
-
-/*
-	for (int i = 0; i < (this->rootNodeBones.size); i++)
-	{
-	}*/
-
-
+	
     // TODO: Apply the current coordinate frame and then draw the root
     // node bones of the character.
+
+
+	mat4 CurrCoordFrame = this->getCurrentCoordinateFrame();
+
+	glPushMatrix(); // Start Base Offset
+
+		glMultMatrixf(&CurrCoordFrame[0][0]); // apply charachter coordnate frame
+
+		for (int i = 0; i < rootNodeBones.size(); i++) { //itterate through all root bones with draw
+			rootNodeBones[i]->draw();
+		}
+
+	glPushMatrix(); // End Base Offset
 
 }
 
@@ -208,35 +205,32 @@ inline Bone::Bone(Reader &r, bool deg) {
 }
 
 inline void Bone::draw() {
-	
+
+    // TODO: Draw the bone as a capsule (a cylinder capped by
+    // spheres). Translate to the end of the bone vector and draw the
+    // bone's children, recursively.
+
 	vec3 boneVec = this->getBoneVector();
-	mat4 boneRot = this->currentRotation;
+	mat4 currLocalBoneRot = this->getCurrentLocalRotation();
 
 	glPushMatrix();
-		mat4 t1 = this->getCurrentLocalRotation();
-		glMultMatrixf(&t1[0][0]);
-		Draw::sphere(boneVec, .05); // sphere at end position
-		Draw::sphere(vec3(0, 0, 0), .05); // sphere at start position (in bone coord frame)
-		glScalef(.05, .05, this->length);
-		//glRotatef();
-		Draw::unitCylinderZ();
-		
+		glMultMatrixf(&currLocalBoneRot[0][0]);
+
+		Draw::axes(.25);
+		Draw::line(boneVec);
+		Draw::capsule(this->length, boneVec);
+
 		if (!(this->children.empty()))
 		{
-			for (int i = 0; i < this->children.size(); i++) {
+			for (int i = 0; i < this->children.size(); i++) { // recurse through children
 				glPushMatrix();
-				mat4 t2 = this->children[i]->getCurrentLocalRotation();
-				glMultMatrixf(&t2[0][0]);
-				this->children[i]->draw();
+					glTranslatef(boneVec.x, boneVec.y, boneVec.z); // move origin to end of bone before drawing child bone
+					this->children[i]->draw();
 				glPopMatrix();
 			}
 		}
 
 	glPopMatrix();
-    
-	// TODO: Draw the bone as a capsule (a cylinder capped by
-    // spheres). Translate to the end of the bone vector and draw the
-    // bone's children, recursively.
 
 }
 

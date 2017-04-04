@@ -58,8 +58,8 @@ inline void OrbitCamera::setCenter(vec3 center) {
 inline void OrbitCamera::onMouseMotion(SDL_MouseMotionEvent &e) {
     if (!(e.state & SDL_BUTTON_LMASK))
         return;
-    lon -= 0.005*e.xrel;
-    lat += 0.005*e.yrel;
+    lon -= 0.005f*e.xrel;
+    lat += 0.005f*e.yrel;
     if (lat < -M_PI/2 + 0.001)
         lat = -M_PI/2 + 0.001;
     if (lat > M_PI/2 - 0.001)
