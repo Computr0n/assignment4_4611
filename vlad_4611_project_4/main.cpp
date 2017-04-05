@@ -36,29 +36,29 @@ public:
         }
         path = new Spline3;
         // Constant-velocity line
-        path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(1.5,0,0)));
-        path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(1.5,0,0)));
+        //path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(1.5,0,0)));
+        //path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(1.5,0,0)));
         /*
         // Ease-in ease-out line
         path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(0,0,0)));
         path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(0,0,0)));
         */
-        /*
-        // Approximately circular path
-        path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1.5)));
-        path->points.push_back(SplinePoint3(5, vec3(0,0,5), vec3(-1.5,0,0)));
-        path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,-1.5)));
-        path->points.push_back(SplinePoint3(15, vec3(0,0,-5), vec3(1.5,0,0)));
-        path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1.5)));
-        */
-        /*
-        // Figure-eight path
+        //
+        //// Approximately circular path
+        //path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1.5)));
+        //path->points.push_back(SplinePoint3(5, vec3(0,0,5), vec3(-1.5,0,0)));
+        //path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,-1.5)));
+        //path->points.push_back(SplinePoint3(15, vec3(0,0,-5), vec3(1.5,0,0)));
+        //path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1.5)));
+        //
+        
+        //// Figure-eight path
         path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1)));
         path->points.push_back(SplinePoint3(5, vec3(0,0,0), vec3(-1,0,-1)));
         path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,1)));
         path->points.push_back(SplinePoint3(15, vec3(0,0,0), vec3(1,0,-1)));
         path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1)));
-        */
+        
         time = 0;
     }
 
@@ -121,8 +121,13 @@ public:
         addLight(GL_LIGHT2, vec4(0,1,-1,0), 0.2f*vec3(1,1,1));
         addLight(GL_LIGHT3, vec4(0,1,+1,0), 0.2f*vec3(1,1,1));
 
+		
+		vec3 position		= path->getValue(time);
+		vec3 futurePosition = path->getValue(time + .5);
+		vec3 deriv			= path->getDerivative(time);
+
         // Draw floor
-        drawFloor(path->getValue(time));
+        drawFloor(position);
 
         glColor3f(0.8,0.2,0.2);
         drawSpline(path);
@@ -133,8 +138,19 @@ public:
         // velocity, path->getDerivative(time).
         glColor3f(1,0.8,0.2);
         glPushMatrix();
-        character->draw();
+			glTranslatef(position.x, position.y, position.z);
+			character->draw();
+
+			//direction arrow to future position
+			Draw::line(futurePosition - position);
+			Draw::sphere(futurePosition - position, .025);
+
+			//direction arrow in direction of derivative
+			Draw::line(deriv);
+			Draw::sphere(deriv - position, .025);
+			
         glPopMatrix();
+
 
         SDL_GL_SwapWindow(window);
     }
