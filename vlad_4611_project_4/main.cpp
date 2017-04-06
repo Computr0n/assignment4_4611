@@ -13,8 +13,7 @@ using glm::vec4;
 
 class SplineWalker: public Engine {
 public:
-
-    SDL_Window *window;
+	SDL_Window *window;
     OrbitCamera *camera;
 
     Character *character;
@@ -22,7 +21,7 @@ public:
     float time; // time along the path
 
     SplineWalker() {
-        window = createWindow("Walk the Spline", 1280, 720);
+        window = createWindow("Walk the Spline", 640, 360);
         camera = new OrbitCamera(5, 0, 0, Perspective(30, 16/9., 0.1, 20));
         character = new Character(Config::asfFile, Config::amcFile,
                                   Config::basePosition, Config::baseVelocity);
@@ -35,30 +34,33 @@ public:
             exit(EXIT_FAILURE);
         }
         path = new Spline3;
-        // Constant-velocity line
-        //path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(1.5,0,0)));
-        //path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(1.5,0,0)));
-        /*
+
+
+		int choice = 4;
+		if (choice == 1) {
+        //Constant-velocity line
+        path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(1.5,0,0)));
+        path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(1.5,0,0)));
+		} else if (choice == 2) {
         // Ease-in ease-out line
         path->points.push_back(SplinePoint3(0, vec3(0,0,0), vec3(0,0,0)));
         path->points.push_back(SplinePoint3(10, vec3(15,0,0), vec3(0,0,0)));
-        */
-        //
-        //// Approximately circular path
-        //path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1.5)));
-        //path->points.push_back(SplinePoint3(5, vec3(0,0,5), vec3(-1.5,0,0)));
-        //path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,-1.5)));
-        //path->points.push_back(SplinePoint3(15, vec3(0,0,-5), vec3(1.5,0,0)));
-        //path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1.5)));
-        //
-        
+		} else if (choice == 3) {
+        // Approximately circular path
+        path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1.5)));
+        path->points.push_back(SplinePoint3(5, vec3(0,0,5), vec3(-1.5,0,0)));
+        path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,-1.5)));
+        path->points.push_back(SplinePoint3(15, vec3(0,0,-5), vec3(1.5,0,0)));
+        path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1.5)));
+		} else if (choice == 4) {
         //// Figure-eight path
         path->points.push_back(SplinePoint3(0, vec3(5,0,0), vec3(0,0,1)));
         path->points.push_back(SplinePoint3(5, vec3(0,0,0), vec3(-1,0,-1)));
         path->points.push_back(SplinePoint3(10, vec3(-5,0,0), vec3(0,0,1)));
         path->points.push_back(SplinePoint3(15, vec3(0,0,0), vec3(1,0,-1)));
         path->points.push_back(SplinePoint3(20, vec3(5,0,0), vec3(0,0,1)));
-        
+		}
+
         time = 0;
     }
 
@@ -83,7 +85,16 @@ public:
 
         // TODO: Modify this to control the speed of the character's
         // walk cycle animation.
-        character->advance(dt); 
+
+
+		
+		if (bool enableSpeedAdjustment = true) {
+			float baseSpeed		= glm::length(Config::baseVelocity);
+			float currentSpeed	= glm::length(path->getDerivative(time)); //length of this derivative is speed.
+			character->advance(dt * (currentSpeed / baseSpeed)*.25);
+		} else {
+			character->advance(dt); 
+		}
 
         vec3 p = path->getValue(time);
         vec3 c = camera->getCenter();
@@ -123,8 +134,7 @@ public:
 
 		
 		vec3 position		= path->getValue(time);
-		vec3 futurePosition = path->getValue(time + .5);
-		vec3 deriv			= path->getDerivative(time);
+		vec3 futurePosition = path->getValue(time + 1);
 
         // Draw floor
         drawFloor(position);
@@ -136,18 +146,37 @@ public:
         // obtained from the path spline, i.e. path->getValue(time).
         // Also rotate it so its z-axis aligns with the path spline's
         // velocity, path->getDerivative(time).
+
+
+
+
+
         glColor3f(1,0.8,0.2);
         glPushMatrix();
 			glTranslatef(position.x, position.y, position.z);
-			character->draw();
+			
+			vec3  deriv = path->getDerivative(time);
+			vec3  b = glm::normalize(deriv);
+			vec3  z = vec3(0, 0, 1);
+			vec3  rotAxis = glm::normalize(glm::cross(b, z));
+			float rotAxisLength = glm::length(rotAxis);
+			float angleRad = glm::dot(b, z);
+			float angleDeg = glm::degrees(angleRad);
+			glPushMatrix();
+				glRotatef(-90 + angleDeg, rotAxis.x, rotAxis.y, rotAxis.z);
+				character->draw();
+			glPopMatrix();
 
-			//direction arrow to future position
+			//line to future position marked by sphere
 			Draw::line(futurePosition - position);
-			Draw::sphere(futurePosition - position, .025);
+			Draw::sphere(futurePosition - position, .05);
 
 			//direction arrow in direction of derivative
-			Draw::line(deriv);
-			Draw::sphere(deriv - position, .025);
+			glPushAttrib(GL_CURRENT_BIT);
+				glColor3f(1, 0, 0);
+				Draw::line(deriv*.2);
+				Draw::sphere(deriv*.2, .05);
+			glPopAttrib();
 			
         glPopMatrix();
 

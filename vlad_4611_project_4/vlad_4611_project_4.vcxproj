@@ -39,6 +39,7 @@
   <ItemGroup>
     <None Include="15-mocap-data.pdf" />
     <None Include="handout.pdf" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="CMUmocapSkeleton.png" />
