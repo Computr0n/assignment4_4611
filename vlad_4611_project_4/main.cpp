@@ -161,7 +161,7 @@ public:
 			vec3  rotAxis = glm::normalize(glm::cross(b, z));
 			float rotAxisLength = glm::length(rotAxis);
 			float angleRad = glm::dot(b, z);
-			float angleDeg = glm::degrees(angleRad);
+			float angleDeg = (angleRad) * 90;
 			glPushMatrix();
 				glRotatef(-90 + angleDeg, rotAxis.x, rotAxis.y, rotAxis.z);
 				character->draw();
